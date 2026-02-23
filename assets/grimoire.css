@@ -431,16 +431,56 @@ nav {
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: var(--grimoire-page-flip-duration);
+  backface-visibility: hidden;
+}
+
+/* Page flip keyframes - grimoire book page turning */
+@keyframes pageFlipOut {
+  0% {
+    transform: perspective(1200px) rotateY(0deg) translateZ(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    transform: perspective(1200px) rotateY(-90deg) translateZ(100px);
+    opacity: 0.3;
+    filter: brightness(0.7);
+  }
+  100% {
+    transform: perspective(1200px) rotateY(-180deg) translateZ(0);
+    opacity: 0;
+    filter: brightness(0.5);
+  }
+}
+
+@keyframes pageFlipIn {
+  0% {
+    transform: perspective(1200px) rotateY(180deg) translateZ(0);
+    opacity: 0;
+    filter: brightness(0.5);
+  }
+  50% {
+    transform: perspective(1200px) rotateY(90deg) translateZ(100px);
+    opacity: 0.3;
+    filter: brightness(0.7);
+  }
+  100% {
+    transform: perspective(1200px) rotateY(0deg) translateZ(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
 }
 
 /* Page flip animation for supported browsers */
 @supports (view-transition-name: root) {
   ::view-transition-old(root) {
     animation-name: pageFlipOut;
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
   }
 
   ::view-transition-new(root) {
     animation-name: pageFlipIn;
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
   }
 }
 
@@ -452,6 +492,26 @@ nav {
 @keyframes fadeOut {
   from { opacity: 1; }
   to { opacity: 0; }
+}
+
+/* Page number display in corners */
+.grimoire-page-number {
+  position: fixed;
+  bottom: 2rem;
+  font-family: "Cinzel", serif;
+  font-size: 0.9rem;
+  color: rgba(194, 166, 117, 0.6);
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.grimoire-page-number-left {
+  left: 2rem;
+}
+
+.grimoire-page-number-right {
+  right: 2rem;
 }
 
 /* ═══════════════════════════════════════════════════════════════

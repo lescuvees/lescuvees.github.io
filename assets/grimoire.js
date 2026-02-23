@@ -265,48 +265,91 @@
   };
 
   /* ═══════════════════════════════════════════════════════════════
-   * PAGE TRANSITIONS (Phase 3 - placeholder for now)
+   * PAGE TRANSITIONS (Phase 3)
    * View Transition API integration for page-flip effects
    * ═══════════════════════════════════════════════════════════════ */
 
   const GrimoireTransitions = {
+    enabled: false,
+
     /**
      * Initialize page transition handling
      */
     init() {
       // Skip on mobile or if user prefers reduced motion
       if (isMobile() || prefersReducedMotion()) {
+        console.log('Grimoire: Page transitions disabled (mobile or reduced motion)');
         return;
       }
 
-      // Phase 3 will implement full View Transition API integration
-      // For now, just log support status
+      // Check View Transition API support
       if (supportsViewTransitions()) {
-        console.log('Grimoire: View Transition API supported');
+        console.log('Grimoire: View Transition API supported - enabling page flips');
+        this.enabled = true;
+        this.attachNavigationListeners();
       } else {
-        console.log('Grimoire: View Transition API not supported, will use fallback');
+        console.log('Grimoire: View Transition API not supported - using fade fallback');
+        this.enabled = true;
+        this.attachNavigationListeners();
       }
     },
 
     /**
-     * Handle navigation click (Phase 3)
+     * Attach click listeners to internal navigation links
      */
-    handleNavClick(event) {
-      // To be implemented in Phase 3
+    attachNavigationListeners() {
+      document.addEventListener('click', (event) => {
+        const link = event.target.closest('a[href]');
+
+        // Only intercept internal links
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+
+        // Skip external links, anchors, and special protocols
+        if (!href ||
+            href.startsWith('#') ||
+            href.startsWith('http://') ||
+            href.startsWith('https://') ||
+            href.startsWith('mailto:') ||
+            link.target === '_blank') {
+          return;
+        }
+
+        // Intercept navigation
+        event.preventDefault();
+        this.navigateTo(href);
+      });
     },
 
     /**
-     * Perform page transition with View Transition API (Phase 3)
+     * Navigate to URL with page transition
      */
-    transition(url) {
-      // To be implemented in Phase 3
+    navigateTo(url) {
+      // Use View Transition API if available
+      if (supportsViewTransitions()) {
+        document.startViewTransition(() => {
+          window.location.href = url;
+        });
+      } else {
+        // Fallback: simple fade transition
+        this.fallbackTransition(url);
+      }
     },
 
     /**
-     * Fallback transition for unsupported browsers (Phase 3)
+     * Fallback transition for unsupported browsers
      */
     fallbackTransition(url) {
-      // To be implemented in Phase 3
+      const main = document.querySelector('main');
+      if (main) {
+        main.classList.add('grimoire-page-transition-fallback');
+      }
+
+      // Navigate after fade starts
+      setTimeout(() => {
+        window.location.href = url;
+      }, 150);
     }
   };
 
