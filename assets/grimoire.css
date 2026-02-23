@@ -709,9 +709,49 @@ article.grimoire-flicker {
 }
 
 /* ═══════════════════════════════════════════════════════════════
- * PHASE 1 COMPLETE - Foundation Ready
- * Next phases will add:
- * - Phase 2: Book opening animation keyframes
- * - Phase 3: Page flip transition keyframes
- * - Phase 4: Fog drift animations & particle floating
+ * PERFORMANCE OPTIMIZATIONS (Phase 6)
+ * Final polish and performance tuning
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* Optimize font loading */
+@media (prefers-reduced-data: reduce) {
+  /* Reduce animation complexity on slow connections */
+  .grimoire-fog-layer,
+  .grimoire-particle {
+    display: none;
+  }
+}
+
+/* Print styles - disable effects for printing */
+@media print {
+  #grimoire-opening,
+  .grimoire-fog-layer,
+  .grimoire-particle,
+  .grimoire-skip,
+  body::after {
+    display: none !important;
+  }
+
+  article::after,
+  nav::after,
+  .hero::after {
+    opacity: 0.05 !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .grimoire-fog-layer,
+  .grimoire-particle {
+    display: none;
+  }
+
+  body::after {
+    opacity: 0.2;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * ALL PHASES COMPLETE
+ * Dark tavern grimoire transformation ready for production
  * ═══════════════════════════════════════════════════════════════ */
