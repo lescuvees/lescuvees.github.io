@@ -1,0 +1,378 @@
+/* ═══════════════════════════════════════════════════════════════
+ * LES CUVÉES GRIMOIRE - DARK TAVERN TRANSFORMATION
+ * Phase 1: Foundation with texture overlays and atmospheric base
+ * ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Grimoire timing values */
+  --grimoire-opening-duration: 4s;
+  --grimoire-page-flip-duration: 0.8s;
+  --grimoire-fog-speed-1: 60s;
+  --grimoire-fog-speed-2: 75s;
+  --grimoire-fog-speed-3: 45s;
+
+  /* Effect intensities */
+  --grimoire-parchment-opacity: 0.15;
+  --grimoire-leather-opacity: 0.2;
+  --grimoire-vignette-intensity: 0.4;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * TEXTURE OVERLAYS - Parchment & Leather
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* Parchment texture overlay on main content */
+article::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grimoire-parchment-opacity);
+  mix-blend-mode: multiply;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 115, 85, 0.03) 2px,
+      rgba(139, 115, 85, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 115, 85, 0.03) 2px,
+      rgba(139, 115, 85, 0.03) 4px
+    );
+  z-index: 1;
+}
+
+/* Leather texture overlay on navigation sidebar */
+nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grimoire-leather-opacity);
+  mix-blend-mode: multiply;
+  border-radius: inherit;
+  background-image:
+    radial-gradient(ellipse at 20% 30%, rgba(0, 0, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(0, 0, 0, 0.08) 0%, transparent 50%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 3px,
+      rgba(0, 0, 0, 0.02) 3px,
+      rgba(0, 0, 0, 0.02) 6px
+    );
+  z-index: 1;
+}
+
+/* Ensure nav content stays above texture overlay */
+nav > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Hero section parchment texture */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  border-radius: inherit;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(244, 233, 212, 0.02) 3px,
+      rgba(244, 233, 212, 0.02) 6px
+    );
+  z-index: 1;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * VIGNETTE EFFECT - Subtle edge darkening
+ * ═══════════════════════════════════════════════════════════════ */
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grimoire-vignette-intensity);
+  background: radial-gradient(
+    ellipse at center,
+    transparent 20%,
+    rgba(0, 0, 0, 0.3) 70%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  z-index: 100;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * ENHANCED SHADOWS & DEPTH
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* Deeper shadows on content cards */
+article {
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    0 8px 24px rgba(90, 31, 44, 0.3),
+    inset 0 1px 0 rgba(244, 233, 212, 0.03);
+}
+
+nav {
+  box-shadow:
+    0 14px 40px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(90, 31, 44, 0.25),
+    inset 0 1px 0 rgba(194, 166, 117, 0.05);
+}
+
+.hero {
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    0 8px 24px rgba(90, 31, 44, 0.35),
+    inset 0 1px 0 rgba(244, 233, 212, 0.04);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * GPU ACCELERATION SETUP
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* Promote animated elements to their own layers */
+.grimoire-animated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * OPENING ANIMATION STRUCTURE (Phase 2)
+ * Container setup - animation keyframes added in Phase 2
+ * ═══════════════════════════════════════════════════════════════ */
+
+#grimoire-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a0708 0%, #120f12 50%, #0a0708 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease-out;
+}
+
+#grimoire-opening.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Skip button */
+.grimoire-skip {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid rgba(194, 166, 117, 0.4);
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--parchment-0);
+  font-family: "Cinzel", serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 10000;
+}
+
+.grimoire-skip.visible {
+  opacity: 1;
+}
+
+.grimoire-skip:hover {
+  background: rgba(194, 166, 117, 0.1);
+  border-color: rgba(194, 166, 117, 0.6);
+  transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * FOG LAYERS (Phase 4)
+ * Structure setup - animations added in Phase 4
+ * ═══════════════════════════════════════════════════════════════ */
+
+.grimoire-fog-layer {
+  position: fixed;
+  width: 200%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 50;
+}
+
+/* Individual fog layer styling - animations added in Phase 4 */
+.grimoire-fog-layer-1 {
+  opacity: 0.3;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(90, 31, 44, 0.15) 50%,
+    transparent 70%
+  );
+}
+
+.grimoire-fog-layer-2 {
+  opacity: 0.25;
+  background: linear-gradient(
+    -30deg,
+    transparent 40%,
+    rgba(194, 166, 117, 0.08) 55%,
+    transparent 75%
+  );
+}
+
+.grimoire-fog-layer-3 {
+  opacity: 0.35;
+  background: linear-gradient(
+    60deg,
+    transparent 35%,
+    rgba(90, 31, 44, 0.12) 48%,
+    transparent 65%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * PARTICLE EFFECTS (Phase 4)
+ * Structure setup for floating dust motes
+ * ═══════════════════════════════════════════════════════════════ */
+
+.grimoire-particle {
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(244, 233, 212, 0.4);
+  pointer-events: none;
+  z-index: 60;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * VIEW TRANSITION API INTEGRATION (Phase 3)
+ * Page flip animations
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* View Transition root setup */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--grimoire-page-flip-duration);
+}
+
+/* Page flip animation for supported browsers */
+@supports (view-transition-name: root) {
+  ::view-transition-old(root) {
+    animation-name: pageFlipOut;
+  }
+
+  ::view-transition-new(root) {
+    animation-name: pageFlipIn;
+  }
+}
+
+/* Fallback fade for unsupported browsers */
+.grimoire-page-transition-fallback {
+  animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * MOBILE OPTIMIZATION
+ * Disable heavy effects on smaller screens
+ * ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1080px) {
+  /* Reduce fog opacity on tablets */
+  .grimoire-fog-layer-1,
+  .grimoire-fog-layer-2,
+  .grimoire-fog-layer-3 {
+    opacity: 0.15;
+  }
+
+  /* Reduce vignette intensity */
+  body::after {
+    opacity: 0.25;
+  }
+}
+
+@media (max-width: 700px) {
+  /* Disable fog completely on mobile */
+  .grimoire-fog-layer {
+    display: none;
+  }
+
+  /* Disable particles on mobile */
+  .grimoire-particle {
+    display: none;
+  }
+
+  /* Lighten vignette on mobile */
+  body::after {
+    opacity: 0.15;
+  }
+
+  /* Reduce texture intensity on mobile */
+  article::after,
+  nav::after {
+    opacity: 0.08;
+  }
+
+  /* Skip opening animation on mobile */
+  #grimoire-opening {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * ACCESSIBILITY - Respect user preferences
+ * ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Disable grimoire effects for reduced motion */
+  #grimoire-opening,
+  .grimoire-fog-layer,
+  .grimoire-particle {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ * PHASE 1 COMPLETE - Foundation Ready
+ * Next phases will add:
+ * - Phase 2: Book opening animation keyframes
+ * - Phase 3: Page flip transition keyframes
+ * - Phase 4: Fog drift animations & particle floating
+ * ═══════════════════════════════════════════════════════════════ */
