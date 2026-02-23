@@ -104,7 +104,7 @@
   };
 
   /* ═══════════════════════════════════════════════════════════════
-   * OPENING ANIMATION (Phase 2 - placeholder for now)
+   * OPENING ANIMATION (Phase 2)
    * 3D book opening sequence with Les Cuvées emblem
    * ═══════════════════════════════════════════════════════════════ */
 
@@ -128,30 +128,126 @@
         return;
       }
 
-      // Phase 2 will implement the full opening animation
-      // For now, just mark as shown
+      // Create and start opening animation
+      this.create();
+      this.start();
+
+      // Mark as shown for this session
       GrimoireSession.markOpeningShown();
     },
 
     /**
-     * Create opening animation structure (Phase 2)
+     * Create opening animation structure
      */
     create() {
-      // To be implemented in Phase 2
+      // Create container
+      this.container = document.createElement('div');
+      this.container.id = 'grimoire-opening';
+
+      // Create book structure
+      const book = document.createElement('div');
+      book.className = 'grimoire-book';
+
+      const bookInner = document.createElement('div');
+      bookInner.className = 'grimoire-book-inner';
+
+      // Create book cover (front)
+      const coverFront = document.createElement('div');
+      coverFront.className = 'grimoire-cover-front';
+
+      // Create emblem
+      const emblem = document.createElement('div');
+      emblem.className = 'grimoire-emblem';
+
+      const emblemSymbol = document.createElement('div');
+      emblemSymbol.className = 'grimoire-emblem-symbol';
+      emblemSymbol.textContent = '✠';
+
+      const emblemText = document.createElement('div');
+      emblemText.className = 'grimoire-emblem-text';
+      emblemText.innerHTML = 'Les<br/>Cuvées';
+
+      emblem.appendChild(emblemSymbol);
+      emblem.appendChild(emblemText);
+      coverFront.appendChild(emblem);
+
+      // Create pages (right side - visible after opening)
+      const pagesRight = document.createElement('div');
+      pagesRight.className = 'grimoire-pages-right';
+
+      // Create spine
+      const spine = document.createElement('div');
+      spine.className = 'grimoire-spine';
+
+      // Assemble book
+      bookInner.appendChild(coverFront);
+      bookInner.appendChild(pagesRight);
+      bookInner.appendChild(spine);
+      book.appendChild(bookInner);
+
+      // Create skip button
+      this.skipButton = document.createElement('button');
+      this.skipButton.className = 'grimoire-skip';
+      this.skipButton.textContent = 'Passer';
+      this.skipButton.addEventListener('click', () => this.skip());
+
+      // Assemble container
+      this.container.appendChild(book);
+      this.container.appendChild(this.skipButton);
+
+      // Add to DOM
+      document.body.appendChild(this.container);
     },
 
     /**
-     * Start opening animation (Phase 2)
+     * Start opening animation
      */
     start() {
-      // To be implemented in Phase 2
+      if (!this.container) return;
+
+      // Activate container (fade in)
+      requestAnimationFrame(() => {
+        this.container.classList.add('active');
+      });
+
+      // Start book opening animation
+      setTimeout(() => {
+        this.container.classList.add('opening');
+      }, 100);
+
+      // Show skip button after 2 seconds
+      this.skipTimeout = setTimeout(() => {
+        if (this.skipButton) {
+          this.skipButton.classList.add('visible');
+        }
+      }, GRIMOIRE_CONFIG.skipButtonDelay);
+
+      // Auto-close after full animation (4 seconds)
+      this.animationTimeout = setTimeout(() => {
+        this.close();
+      }, GRIMOIRE_CONFIG.openingDuration);
     },
 
     /**
      * Skip opening animation
      */
     skip() {
-      // To be implemented in Phase 2
+      this.close();
+    },
+
+    /**
+     * Close and cleanup opening animation
+     */
+    close() {
+      if (!this.container) return;
+
+      // Start closing animation
+      this.container.classList.add('closing');
+
+      // Remove from DOM after animation completes
+      setTimeout(() => {
+        this.cleanup();
+      }, 1200);
     },
 
     /**
@@ -160,7 +256,11 @@
     cleanup() {
       if (this.skipTimeout) clearTimeout(this.skipTimeout);
       if (this.animationTimeout) clearTimeout(this.animationTimeout);
-      if (this.container) this.container.remove();
+      if (this.container) {
+        this.container.remove();
+        this.container = null;
+      }
+      this.skipButton = null;
     }
   };
 
