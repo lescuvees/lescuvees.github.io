@@ -146,6 +146,26 @@ nav {
     inset 0 1px 0 rgba(244, 233, 212, 0.04);
 }
 
+/* Candle-flicker effect on article shadows */
+@keyframes candleFlicker {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 24px 60px rgba(0, 0, 0, 0.5));
+  }
+  25% {
+    filter: brightness(1.02) drop-shadow(0 24px 62px rgba(0, 0, 0, 0.48));
+  }
+  50% {
+    filter: brightness(0.98) drop-shadow(0 24px 58px rgba(0, 0, 0, 0.52));
+  }
+  75% {
+    filter: brightness(1.01) drop-shadow(0 24px 61px rgba(0, 0, 0, 0.49));
+  }
+}
+
+article.grimoire-flicker {
+  animation: candleFlicker 3s ease-in-out infinite;
+}
+
 /* ═══════════════════════════════════════════════════════════════
  * GPU ACCELERATION SETUP
  * ═══════════════════════════════════════════════════════════════ */
@@ -376,7 +396,7 @@ nav {
   z-index: 50;
 }
 
-/* Individual fog layer styling - animations added in Phase 4 */
+/* Individual fog layer styling with animations */
 .grimoire-fog-layer-1 {
   opacity: 0.3;
   background: linear-gradient(
@@ -385,6 +405,8 @@ nav {
     rgba(90, 31, 44, 0.15) 50%,
     transparent 70%
   );
+  animation: fogDrift1 var(--grimoire-fog-speed-1) linear infinite;
+  will-change: transform;
 }
 
 .grimoire-fog-layer-2 {
@@ -395,6 +417,8 @@ nav {
     rgba(194, 166, 117, 0.08) 55%,
     transparent 75%
   );
+  animation: fogDrift2 var(--grimoire-fog-speed-2) linear infinite;
+  will-change: transform;
 }
 
 .grimoire-fog-layer-3 {
@@ -405,6 +429,39 @@ nav {
     rgba(90, 31, 44, 0.12) 48%,
     transparent 65%
   );
+  animation: fogDrift3 var(--grimoire-fog-speed-3) linear infinite;
+  will-change: transform;
+}
+
+/* Fog drift animations - slow horizontal movement */
+@keyframes fogDrift1 {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes fogDrift2 {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fogDrift3 {
+  0% {
+    transform: translate3d(0, -2%, 0);
+  }
+  50% {
+    transform: translate3d(-25%, 2%, 0);
+  }
+  100% {
+    transform: translate3d(-50%, -2%, 0);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -414,12 +471,81 @@ nav {
 
 .grimoire-particle {
   position: fixed;
-  width: 3px;
-  height: 3px;
   border-radius: 50%;
   background: rgba(244, 233, 212, 0.4);
   pointer-events: none;
   z-index: 60;
+  will-change: transform, opacity;
+  box-shadow: 0 0 2px rgba(244, 233, 212, 0.3);
+}
+
+/* Particle floating animations - varied durations and paths */
+@keyframes particleFloat1 {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.4;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate3d(-30vw, -100vh, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes particleFloat2 {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate3d(20vw, -110vh, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes particleFloat3 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.3;
+  }
+  88% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate3d(-15vw, -105vh, 0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes particleFloat4 {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.6;
+  }
+  92% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(25vw, -95vh, 0);
+    opacity: 0;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════

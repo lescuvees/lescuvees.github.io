@@ -354,13 +354,14 @@
   };
 
   /* ═══════════════════════════════════════════════════════════════
-   * ATMOSPHERIC EFFECTS (Phase 4 - placeholder for now)
+   * ATMOSPHERIC EFFECTS (Phase 4)
    * Fog layers and floating particles
    * ═══════════════════════════════════════════════════════════════ */
 
   const GrimoireAtmosphere = {
     fogLayers: [],
     particles: [],
+    particleIntervalId: null,
 
     /**
      * Initialize atmospheric effects
@@ -371,32 +372,116 @@
         return;
       }
 
-      // Phase 4 will implement fog and particles
-      console.log('Grimoire: Atmosphere effects will be added in Phase 4');
+      console.log('Grimoire: Creating atmospheric effects (fog + particles)');
+
+      // Create fog layers
+      this.createFogLayers();
+
+      // Create initial batch of particles
+      this.createParticles();
+
+      // Continuously spawn new particles
+      this.particleIntervalId = setInterval(() => {
+        this.spawnParticle();
+      }, 2000); // New particle every 2 seconds
+
+      // Add subtle candle flicker to article
+      const article = document.querySelector('article');
+      if (article) {
+        article.classList.add('grimoire-flicker');
+      }
     },
 
     /**
-     * Create fog layers (Phase 4)
+     * Create fog layers
      */
     createFogLayers() {
-      // To be implemented in Phase 4
+      for (let i = 1; i <= 3; i++) {
+        const fogLayer = document.createElement('div');
+        fogLayer.className = `grimoire-fog-layer grimoire-fog-layer-${i}`;
+        document.body.appendChild(fogLayer);
+        this.fogLayers.push(fogLayer);
+      }
+
+      console.log('Grimoire: Created 3 fog layers');
     },
 
     /**
-     * Create floating particles (Phase 4)
+     * Create initial batch of particles
      */
     createParticles() {
-      // To be implemented in Phase 4
+      const initialCount = GRIMOIRE_CONFIG.particleCount;
+      for (let i = 0; i < initialCount; i++) {
+        // Stagger initial particles
+        setTimeout(() => {
+          this.spawnParticle();
+        }, i * 300);
+      }
+    },
+
+    /**
+     * Spawn a single floating particle
+     */
+    spawnParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'grimoire-particle';
+
+      // Random size within configured range
+      const size = random(
+        GRIMOIRE_CONFIG.particleMinSize,
+        GRIMOIRE_CONFIG.particleMaxSize
+      );
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+
+      // Random starting position (anywhere on screen)
+      particle.style.left = `${random(0, 100)}%`;
+      particle.style.top = `${random(50, 100)}vh`; // Start from bottom half
+
+      // Random animation (one of 4 variations)
+      const animationIndex = Math.floor(random(1, 5));
+      const duration = random(15, 25); // 15-25 seconds
+      const delay = random(0, 3); // 0-3 second delay
+
+      particle.style.animation = `particleFloat${animationIndex} ${duration}s linear ${delay}s forwards`;
+
+      // Add to DOM
+      document.body.appendChild(particle);
+      this.particles.push(particle);
+
+      // Remove after animation completes
+      setTimeout(() => {
+        particle.remove();
+        const index = this.particles.indexOf(particle);
+        if (index > -1) {
+          this.particles.splice(index, 1);
+        }
+      }, (duration + delay) * 1000);
     },
 
     /**
      * Cleanup atmospheric effects
      */
     cleanup() {
+      // Clear particle spawn interval
+      if (this.particleIntervalId) {
+        clearInterval(this.particleIntervalId);
+        this.particleIntervalId = null;
+      }
+
+      // Remove fog layers
       this.fogLayers.forEach(layer => layer.remove());
-      this.particles.forEach(particle => particle.remove());
       this.fogLayers = [];
+
+      // Remove particles
+      this.particles.forEach(particle => particle.remove());
       this.particles = [];
+
+      // Remove candle flicker
+      const article = document.querySelector('article');
+      if (article) {
+        article.classList.remove('grimoire-flicker');
+      }
     }
   };
 
